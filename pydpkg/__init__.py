@@ -19,7 +19,6 @@ from functools import cmp_to_key
 
 # pypi imports
 import six
-import pgpy
 from arpy import Archive
 
 REQUIRED_HEADERS = ('package', 'version', 'architecture')
@@ -641,14 +640,6 @@ class Dsc(object):
         return dict(self._message.items())
 
     @property
-    def pgp_message(self):
-        """Return a pgpy.PGPMessage object containing the signed dsc
-        message (or None if the message is unsigned)"""
-        if self._message is None:
-            self._message = self._process_dsc_file()
-        return self._pgp_message
-
-    @property
     def source_files(self):
         """Return a list of source files found in the dsc file"""
         if self._source_files is None:
@@ -788,7 +779,6 @@ class Dsc(object):
                 'on but we may experience some turbulence and possibly '
                 'explode.', self.filename)
         try:
-            self._pgp_message = pgpy.PGPMessage.from_file(self.filename)
             self._log.debug('Found pgp signed message')
             msg = message_from_string(self._pgp_message.message)
         except TypeError as ex:
